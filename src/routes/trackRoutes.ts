@@ -4,7 +4,7 @@ import  jwt  from "jsonwebtoken";
 
 const router = Router();
 const prisma = new PrismaClient();
-const JWT_SECRET = "SUPERSECRET";
+
 //Crud da Track
 
 /// Criar Track
