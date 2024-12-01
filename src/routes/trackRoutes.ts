@@ -26,24 +26,24 @@ router.post('/', async (req,res)=>{
 
 //Listar Tracks
 router.get('/', async(req,res)=>{
-    const allTracks = await prisma.track.findMany();
+    const allTracks = await prisma.track.findMany({
+        include: {user:{select:{
+            id:true,
+            name:true,
+            username:true,
+            image:true}}},
+    });
     res.json(allTracks);
 });
 
 //mostrar 1 Track
-router.get('/:id', async(req,res)=>{
+router.get('/:id', async(req,res) => {
     const {id} = req.params
     const track = await prisma.track.findUnique({where:{id:Number(id) } } );
     if (!track){
         return res.status(404).json({error:"Track not found!"})
     }
     res.json(track);
-});
-
-//Atualizar Track
-router.put('/:id', (req,res)=>{
-    const {id} = req.params;
-    res.status(501).json({error: `not implemented ${id}`});
 });
 
 //deletar Track
