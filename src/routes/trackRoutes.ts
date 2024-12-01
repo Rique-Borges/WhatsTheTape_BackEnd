@@ -1,28 +1,33 @@
 import { Router } from "express";
 import { Prisma, PrismaClient } from "@prisma/client";
+import  jwt  from "jsonwebtoken";
 
 const router = Router();
 const prisma = new PrismaClient();
-
+const JWT_SECRET = "SUPERSECRET";
 //Crud da Track
 
-// Criar Track
-router.post('/', async (req,res)=>{
-    const {content, image, userId} = req.body;
+/// Criar Track
+router.post('/', async (req, res) => {
+    const { content, image } = req.body;
+    // @ts-ignore
+    const user = req.user;
 
-    try{
-    const result = await prisma.track.create({
-        data:{
-           content ,
-           image,
-           userId
-        }
-    });
-    res.json(result);
-}catch(e){
-        res.status(400).json({error:"Username or Email already in use"})
+    try {
+        const result = await prisma.track.create({
+            data: {
+                content,
+                image,
+                userId: user.id,
+            }
+        });
+        res.json(result); // Resposta final enviada aqui
+    } catch (e) {
+        res.status(400).json({ error: "Username or Email already in use" });
     }
 });
+
+
 
 //Listar Tracks
 router.get('/', async(req,res)=>{
@@ -39,7 +44,10 @@ router.get('/', async(req,res)=>{
 //mostrar 1 Track
 router.get('/:id', async(req,res) => {
     const {id} = req.params
-    const track = await prisma.track.findUnique({where:{id:Number(id) } } );
+    const track = await prisma.track.findUnique({
+        where:{id:Number(id) },
+        include: {user:true}
+    } );
     if (!track){
         return res.status(404).json({error:"Track not found!"})
     }
