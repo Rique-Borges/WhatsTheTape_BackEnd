@@ -19,7 +19,8 @@ router.post('/', async (req, res) => {
                 content,
                 image,
                 userId: user.id,
-            }
+            },
+            include:{user:true},
         });
         res.json(result); // Resposta final enviada aqui
     } catch (e) {
